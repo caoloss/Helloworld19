@@ -1,0 +1,51 @@
+# deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-dev
+  labels:
+    name: app-dev
+    app: app-dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+     name: app-dev
+     app: app-dev
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        name: app-dev
+        app: app-dev
+
+    spec:
+      containers:
+      - name: app-dev
+        image: caolos/preven
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+  # service deployment
+  apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: app-dev-service
+  labels:
+    app: app-dev
+
+spec:
+  selector:
+    app: app-dev
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 31200
+  
